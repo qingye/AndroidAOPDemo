@@ -1,0 +1,26 @@
+ext {
+    GROUP = 'com.chris.aop'
+    VERSION_NAME = "${VERSION}"
+
+    PROJECT_URL = 'https://github.com/qingye/AndroidAOPDemo'
+    ISSUES_URL = "${PROJECT_URL}/issues"
+
+    BINTRAY_LICENCE = 'Apache-2.0'
+    BINTRAY_ORGANIZATION = "qingye"
+
+    LICENSE = [
+            NAME: "The Apache Software License, Version 2.0",
+            URL : "http://www.apache.org/licenses/LICENSE-2.0.txt"
+    ]
+
+    DEVELOPER = [
+            ID   : "",
+            NAME : "qingye",
+            EMAIL: "24854015@qq.com"
+    ]
+
+    SCM = [
+            URL   : "${PROJECT_URL}",
+            COMMIT: ""
+    ]
+}

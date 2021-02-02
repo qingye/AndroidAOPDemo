@@ -1,0 +1,45 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.3.72'
+    repositories {
+        google()
+        jcenter()
+        maven {
+//            url uri('./repo')
+            url uri('https://dl.bintray.com/qingye/maven')
+        }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.5.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // JCenter Gradle Plugin
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
+
+        // Out Aop ASM Gradle Plugin
+        classpath 'com.chris.aop:aop-asm-gradle-plugin:1.0.0'
+    }
+}
+
+apply from: rootProject.file('gradle/project-mvn-config.gradle')
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven {
+//            url uri('./repo')
+            url uri('https://dl.bintray.com/qingye/maven')
+        }
+    }
+
+    tasks.withType(Javadoc) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

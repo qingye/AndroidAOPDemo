@@ -1,0 +1,41 @@
+apply plugin: 'java-library'
+apply plugin: 'groovy'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation gradleApi()
+    implementation localGroovy()
+
+    implementation 'org.ow2.asm:asm:9.0'
+    implementation 'org.ow2.asm:asm-commons:9.0'
+    implementation 'com.android.tools.build:gradle:3.5.0'
+}
+
+def srcRootDir = '../aop-asm-gradle-plugin/src/main'
+sourceSets {
+    main {
+        groovy {
+            srcDir "${srcRootDir}/groovy"
+        }
+        java {
+            srcDir "${srcRootDir}/java"
+        }
+        resources {
+            srcDir "${srcRootDir}/resources"
+        }
+    }
+}
+
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+group = rootProject.ext.GROUP
+version = rootProject.ext.VERSION_NAME
+
+/****************************************************************************
+ * Use command-line to build single module (at root project):
+ *
+ * $ ./gradlew :aop-asm-gradle-plugin:publish
+ ****************************************************************************/
+apply from: rootProject.file('gradle/publish-java.gradle')

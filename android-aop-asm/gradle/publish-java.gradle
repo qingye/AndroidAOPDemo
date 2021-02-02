@@ -1,0 +1,92 @@
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+// 定义 pom 所需要的内容
+def pomConfig = {
+    licenses {
+        license {
+            name "${rootProject.ext.LICENSE.NAME}"
+            url "${rootProject.ext.LICENSE.URL}"
+        }
+    }
+
+    developers {
+        developer {
+            name "${rootProject.ext.DEVELOPER.NAME}"
+        }
+    }
+
+    scm {
+        url "${rootProject.ext.SCM.URL}"
+    }
+}
+
+// 生成 java 文档和源码包
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.java.srcDirs
+}
+
+// Maven 的 task
+// 运行 publishing 命令时，maven插件会寻找该任务
+publishing {
+    publications {
+        // 自定义一个 publication，名字叫 component，类型是 MavenPublication
+        // 会在 build/publications 下生成该名字的 pom-default.xml文件
+        component(MavenPublication) {
+            // 由 Java 插件提供的标准发布构件，是包含了运行时依赖的 jar 文件
+            from components.java
+
+            groupId = group
+            artifactId = POM_ARTIFACT_ID
+            version = version
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            // append additional configurations
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('name', "${group}:${POM_ARTIFACT_ID}")
+                root.appendNode('url', "${rootProject.ext.PROJECT_URL}")
+                root.appendNode('description', 'android aop')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+
+    // 定义 maven 仓库名称
+    // 1. 可以在这里定义一个 repositories
+    // 2. 可以在后面追加
+}
+
+// // 指定发布仓库的本地路径（该路径为项目根目录下的 repo 目录）
+publishing.repositories {
+    maven {
+        url "../repo"
+    }
+}
+
+afterEvaluate {
+    bintray {
+        user = BINTRAY_USER
+        key = BINTRAY_KEY
+        publications = ['component']
+
+        pkg {
+            repo = 'maven'
+            name = "${POM_ARTIFACT_ID}"
+            userOrg = "${rootProject.ext.BINTRAY_ORGANIZATION}"
+            websiteUrl = "${rootProject.ext.PROJECT_URL}"
+            vcsUrl = "${rootProject.ext.PROJECT_URL}"
+            issueTrackerUrl = "${rootProject.ext.ISSUES_URL}"
+            licenses = ['Apache-2.0']
+            publish = true
+            publicDownloadNumbers = true
+        }
+    }
+}
